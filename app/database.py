@@ -1,18 +1,37 @@
+from pathlib import Path
+
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
 from app.config import settings
 
 
+def _connection_kwargs() -> dict:
+    kwargs: dict = {
+        "host": settings.db_host,
+        "port": settings.db_port,
+        "dbname": settings.db_name,
+        "user": settings.db_user,
+        "password": settings.db_password,
+        "cursor_factory": RealDictCursor,
+    }
+
+    sslmode = (settings.db_sslmode or "").strip().lower()
+    if sslmode and sslmode != "disable":
+        kwargs["sslmode"] = settings.db_sslmode
+        cert_path = Path(settings.db_sslrootcert)
+        if not cert_path.is_file():
+            raise FileNotFoundError(
+                f"No se encontró el certificado RDS en '{cert_path}'. "
+                "Ejecuta: .\\scripts\\download-rds-ca.ps1"
+            )
+        kwargs["sslrootcert"] = str(cert_path)
+
+    return kwargs
+
+
 def get_connection():
-    return psycopg2.connect(
-        host=settings.db_host,
-        port=settings.db_port,
-        dbname=settings.db_name,
-        user=settings.db_user,
-        password=settings.db_password,
-        cursor_factory=RealDictCursor,
-    )
+    return psycopg2.connect(**_connection_kwargs())
 
 
 def init_db() -> None:

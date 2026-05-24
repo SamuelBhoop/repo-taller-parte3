@@ -3,6 +3,9 @@ FROM public.ecr.aws/lambda/python:3.12
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN curl -fsSL -o ${LAMBDA_TASK_ROOT}/global-bundle.pem \
+    https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
+
 COPY app ${LAMBDA_TASK_ROOT}/app
 COPY lambda_handler.py ${LAMBDA_TASK_ROOT}/
 

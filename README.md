@@ -4,6 +4,7 @@ Repositorio: https://github.com/SamuelBhoop/repo-taller-parte3
 
 - **S3:** `user-1138025476-ueia-so` (`us-east-1`)
 - **RDS:** PostgreSQL `taller-aws`
+- **Endpoint:** `taller-aws.c2l8uo4wgjp3.us-east-1.rds.amazonaws.com`
 
 ## Endpoints
 
@@ -36,14 +37,34 @@ Copia `.env.example` a `.env` y completa:
 AWS_REGION=us-east-1
 S3_BUCKET=user-1138025476-ueia-so
 
-DB_HOST=taller-aws.xxxxx.us-east-1.rds.amazonaws.com
+DB_HOST=taller-aws.c2l8uo4wgjp3.us-east-1.rds.amazonaws.com
 DB_PORT=5432
 DB_NAME=postgres
 DB_USER=postgres
 DB_PASSWORD=tu_password
+DB_SSLMODE=verify-full
+DB_SSLROOTCERT=global-bundle.pem
 ```
 
 Credenciales AWS en tu PC (`aws configure`) o variables `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` con permisos sobre el bucket S3.
+
+## Paso 2b — Certificado SSL de RDS (como en la consola AWS)
+
+En la raíz del proyecto:
+
+```powershell
+.\scripts\download-rds-ca.ps1
+```
+
+Equivale a:
+
+```powershell
+curl -o global-bundle.pem https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
+```
+
+El archivo `global-bundle.pem` no se sube a GitHub (está en `.gitignore`). Docker y Lambda lo descargan al construir la imagen.
+
+Si SSL falla en pruebas locales, en `.env` pon temporalmente: `DB_SSLMODE=disable`
 
 ## Paso 3 — Tú: probar en local
 
