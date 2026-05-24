@@ -1,19 +1,18 @@
 from pathlib import Path
 
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import psycopg
+from psycopg.rows import dict_row
 
 from app.config import settings
 
 
-def _connection_kwargs() -> dict:
+def _connect_kwargs() -> dict:
     kwargs: dict = {
         "host": settings.db_host,
         "port": settings.db_port,
         "dbname": settings.db_name,
         "user": settings.db_user,
         "password": settings.db_password,
-        "cursor_factory": RealDictCursor,
     }
 
     sslmode = (settings.db_sslmode or "").strip().lower()
@@ -31,7 +30,7 @@ def _connection_kwargs() -> dict:
 
 
 def get_connection():
-    return psycopg2.connect(**_connection_kwargs())
+    return psycopg.connect(**_connect_kwargs(), row_factory=dict_row)
 
 
 def init_db() -> None:

@@ -68,10 +68,14 @@ Si SSL falla en pruebas locales, en `.env` pon temporalmente: `DB_SSLMODE=disabl
 
 ## Paso 3 — Tú: probar en local
 
+Usa **Python 3.11 o 3.12** (en Windows evita 3.14 si `pip` falla con drivers de BD).
+
 ```powershell
 cd C:\Users\User\repo-taller-parte3
-python -m venv venv
+git pull
+py -3.12 -m venv venv
 .\venv\Scripts\Activate.ps1
+pip install --upgrade pip
 pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
