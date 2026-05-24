@@ -68,17 +68,21 @@ Si SSL falla en pruebas locales, en `.env` pon temporalmente: `DB_SSLMODE=disabl
 
 ## Paso 3 — Tú: probar en local
 
-Usa **Python 3.11 o 3.12** (en Windows evita 3.14 si `pip` falla con drivers de BD).
+En Windows usa el Python que tengas instalado (`py --list`). Con **3.14** funciona si usas las dependencias actualizadas del repo.
 
 ```powershell
 cd C:\Users\User\repo-taller-parte3
 git pull
-py -3.12 -m venv venv
+
+Remove-Item -Recurse -Force venv -ErrorAction SilentlyContinue
+py -3.14 -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install --upgrade pip
 pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+Si no tienes 3.14: `py install 3.12` o descarga desde https://www.python.org/downloads/
 
 Abre http://127.0.0.1:8000/docs → prueba **POST /imagenes** y **GET /imagenes/{usuario}/{nombre_archivo}**.
 
